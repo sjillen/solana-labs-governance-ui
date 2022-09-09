@@ -248,13 +248,13 @@ export default function useMembers() {
             communityMembers: [...oldCommunityRecords, member],
             communityTokenCount:
               (delegateMap[walletId]?.communityTokenCount || 0) +
-              member.communityVotes.toNumber(),
+              +member.communityVotes.toString(),
           }
         } else {
           delegateMap[walletId] = {
             communityMembers: [member],
             communityTokenCount: member.communityVotes
-              ? member.communityVotes.toNumber()
+              ? +member.communityVotes.toString() //error : toNumber() takes up to 53bytes only, seems like we are going over that
               : 0,
           }
         }

@@ -6,7 +6,6 @@ import {
 } from '@castlefinance/vault-core'
 import { VaultClient } from '@castlefinance/vault-sdk'
 import { Provider } from '@castlefinance/vault-sdk/node_modules/@project-serum/anchor'
-import { AnchorWallet } from '@friktion-labs/friktion-sdk/dist/cjs/src/miscUtils'
 import {
   serializeInstructionToBase64,
   ProposalTransaction,
@@ -25,6 +24,7 @@ import {
   Keypair,
   Connection,
 } from '@solana/web3.js'
+import { AnchorWallet } from '@switchboard-xyz/switchboard-v2'
 import { ConnectionContext, getNetworkFromEndpoint } from '@utils/connection'
 import { validateInstruction } from '@utils/instructionTools'
 import { AssetAccount } from '@utils/uiTypes/assets'

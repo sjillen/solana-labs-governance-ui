@@ -1,12 +1,12 @@
 import {
-  ConnectedVoltSDK,
   FriktionSDK,
   PendingDepositWithKey,
+  toConnectedSDK,
   VoltSDK,
 } from '@friktion-labs/friktion-sdk'
-import { AnchorWallet } from '@friktion-labs/friktion-sdk/dist/cjs/src/miscUtils'
 import { WSOL_MINT } from '@components/instructions/tools'
 import Decimal from 'decimal.js'
+
 import { serializeInstructionToBase64 } from '@solana/spl-governance'
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -14,12 +14,14 @@ import {
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
 import { WalletAdapter } from '@solana/wallet-adapter-base'
+import { AnchorWallet } from '@switchboard-xyz/switchboard-v2'
 import {
   Account,
   Keypair,
   PublicKey,
   TransactionInstruction,
 } from '@solana/web3.js'
+
 import type { ConnectionContext } from 'utils/connection'
 import { getATA } from '../../ataTools'
 import { UiInstruction } from '../../uiTypes/proposalCreationTypes'
@@ -64,10 +66,10 @@ export async function getFriktionDepositInstruction({
         wallet: (wallet as unknown) as AnchorWallet,
       },
     })
-    const cVoltSDK = new ConnectedVoltSDK(
+    const cVoltSDK = toConnectedSDK(
+      await sdk.loadVoltSDKWithExtraDataByKey(voltVaultId),
       connection.current,
       wallet.publicKey as PublicKey,
-      await sdk.loadVoltAndExtraDataByKey(voltVaultId),
       governedTokenAccount.governance.pubkey
     )
 
@@ -229,10 +231,10 @@ export async function getFriktionWithdrawInstruction({
         wallet: (wallet as unknown) as AnchorWallet,
       },
     })
-    const cVoltSDK = new ConnectedVoltSDK(
+    const cVoltSDK = toConnectedSDK(
+      await sdk.loadVoltSDKWithExtraDataByKey(voltVaultId),
       connection.current,
       wallet.publicKey as PublicKey,
-      await sdk.loadVoltAndExtraDataByKey(voltVaultId),
       governedTokenAccount.governance.pubkey
     )
 
@@ -345,10 +347,10 @@ export async function getFriktionClaimPendingDepositInstruction({
         wallet: (wallet as unknown) as AnchorWallet,
       },
     })
-    const cVoltSDK = new ConnectedVoltSDK(
+    const cVoltSDK = toConnectedSDK(
+      await sdk.loadVoltSDKWithExtraDataByKey(voltVaultId),
       connection.current,
       wallet.publicKey as PublicKey,
-      await sdk.loadVoltAndExtraDataByKey(voltVaultId),
       governedTokenAccount.governance.pubkey
     )
 
@@ -400,7 +402,9 @@ export async function getFriktionClaimPendingDepositInstruction({
         pendingDepositInfo.roundNumber.lt(voltVault.roundNumber) &&
         pendingDepositInfo?.numUnderlyingDeposited?.gtn(0)
       ) {
-        const ix = await cVoltSDK.claimPending(receiverAddress)
+        const ix = await cVoltSDK.claimPendingDepositWithoutSigning(
+          receiverAddress
+        )
         serializedInstruction = serializeInstructionToBase64(ix)
       } else {
         throw new Error('No pending deposit to claim')
@@ -457,10 +461,10 @@ export async function getFriktionClaimPendingWithdrawInstruction({
         wallet: (wallet as unknown) as AnchorWallet,
       },
     })
-    const cVoltSDK = new ConnectedVoltSDK(
+    const cVoltSDK = toConnectedSDK(
+      await sdk.loadVoltSDKWithExtraDataByKey(voltVaultId),
       connection.current,
       wallet.publicKey as PublicKey,
-      await sdk.loadVoltAndExtraDataByKey(voltVaultId),
       governedTokenAccount.governance.pubkey
     )
 
